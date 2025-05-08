@@ -1,2 +1,2 @@
 # ApiTaskManager
-Desarrollo de una API RESTful para un sistema de gestión de tareas
+Desarrollo de una API RESTful para un sistema de gestión de tareas.
