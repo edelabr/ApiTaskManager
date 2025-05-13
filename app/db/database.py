@@ -1,4 +1,3 @@
-from datetime import date, datetime
 import os
 from sqlmodel import SQLModel, create_engine, Session
 
@@ -20,6 +19,6 @@ def create_db_and_tables():
 def drop_db_and_tables():
     SQLModel.metadata.drop_all(engine)
 
-def get_session():
+def get_db_session():
     with Session(engine) as session:
         yield session

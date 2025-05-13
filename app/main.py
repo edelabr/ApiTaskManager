@@ -1,10 +1,14 @@
 from fastapi import FastAPI
+from routes import user
 
-app = FastAPI()
+app = FastAPI(title="Task Manager API")
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello, World!"}
+    return {"message": "Welcome to Task Manager API!"}
+
+# Routers
+app.include_router(user.router)
 
 if __name__ == "__main__":
     import uvicorn
