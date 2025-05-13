@@ -19,3 +19,7 @@ class UserRead(SQLModel):
     username: str
     email: str
     created_at: datetime
+
+class UserUpdate(SQLModel):
+    username: Optional[str] = None
+    email: Optional[str] = None
