@@ -28,8 +28,7 @@ def read_users(
     try:
         users = db.execute(query).scalars().all()
     except Exception as e:
-        print(f"Error executing query: {e}")
-        users = []
+        raise HTTPException(status_code=400, detail=f"Error getting users: {e}")
 
     if not users:
         raise HTTPException(status_code=404, detail="Users not found")

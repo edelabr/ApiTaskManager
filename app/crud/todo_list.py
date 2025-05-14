@@ -1,9 +1,52 @@
+from typing import Optional
 from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
 from db.database import get_db_session
 from models.todo_list import TodoList, TodoListCreate, TodoListRead
 from models.user import User
 
+def read_todo_list(
+    id: Optional[int] = None,
+    owner_id: Optional[int] = None,
+    username: Optional[str] = None,
+    email: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db_session)
+):
+    query = select(TodoList.id, TodoList.title, TodoList.description, User.username, TodoList.created_at).join(User, TodoList.owner_id == User.id)
+
+    if id:
+        query = query.where(TodoList.id == id)
+    if owner_id:
+        query = query.where(TodoList.owner_id == owner_id)
+    if username:
+        query = query.where(User.username == username)
+    if email:
+        query = query.where(User.email == email)
+
+    query = query.offset(skip).limit(limit)
+    
+    try:
+        todo_lists = db.execute(query).fetchall()
+
+        if not todo_lists:
+            raise HTTPException(status_code=404, detail="Todo lists not found")
+    
+        new_todo_lists = []
+        for todo_list in todo_lists:
+            todo_list_read = TodoListRead(
+                id=todo_list[0],
+                title=todo_list[1],
+                description=todo_list[2],
+                owner_username=todo_list[3],
+                created_at=todo_list[4]
+            )
+            new_todo_lists.append(todo_list_read)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error getting todo lists: {e}")
+
+    return new_todo_lists
 
 def create_todo_list(todo_list_create: TodoListCreate, db: Session = Depends(get_db_session)):
     # Validar que el owner_username existe en la base de datos de usuarios
@@ -32,6 +75,6 @@ def create_todo_list(todo_list_create: TodoListCreate, db: Session = Depends(get
     )
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error creating todo_list: {e}")
+        raise HTTPException(status_code=400, detail=f"Error creating todo list: {e}")
 
     return returned_new_list 
