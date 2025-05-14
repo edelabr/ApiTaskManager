@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
 
 from models.user import User, UserCreate, UserUpdate
@@ -31,25 +31,28 @@ def read_users(
         print(f"Error executing query: {e}")
         users = []
 
+    if not users:
+        raise HTTPException(status_code=404, detail="Users not found")
+
     return users
 
 def create_user(user: UserCreate, db: Session = Depends(get_db_session)):
     hashed_password = user.password  # Aquí deberías aplicar un hash a la contraseña
-    db_user = User(
+    new_user = User(
         username=user.username,
         email=user.email,
         hashed_password=hashed_password,
         created_at=datetime.utcnow()
     )
     try:
-        db.add(db_user)
+        db.add(new_user)
         db.commit()
-        db.refresh(db_user)
+        db.refresh(new_user)
     except Exception as e:
         db.rollback()
-        print(f"Error creating user: {e}")
+        raise HTTPException(status_code=400, detail=f"Error creating user: {e}")
     
-    return db_user
+    return new_user
 
 def update_user(
     user_id: int,
@@ -60,7 +63,7 @@ def update_user(
     user = db.exec(query).first()
 
     if not user:
-        return None
+        raise HTTPException(status_code=404, detail="User not found")
 
     for key, value in user_update.dict(exclude_unset=True).items():
         setattr(user, key, value)
@@ -71,7 +74,7 @@ def update_user(
         db.refresh(user)
     except Exception as e:
         db.rollback()
-        print(f"Error updating user: {e}")
+        raise HTTPException(status_code=400, detail=f"Error updating user: {e}")
 
     return user
 
@@ -80,13 +83,13 @@ def delete_user(user_id: int, db: Session = Depends(get_db_session)):
     user = db.exec(query).first()
 
     if not user:
-        return None
+        raise HTTPException(status_code=404, detail="User not found")
     
     try:
         db.delete(user)
         db.commit()
     except Exception as e:
         db.rollback()
-        print(f"Error deleting user: {e}")
+        raise HTTPException(status_code=400, detail=f"Error deleting user: {e}")
 
-    return user
+    return {"detail": "User deleted successfully"}

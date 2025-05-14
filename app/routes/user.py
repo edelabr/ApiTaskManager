@@ -17,41 +17,16 @@ def get_users(
     limit: int = 10,
     db: Session = Depends(get_db_session)
 ):
-    users = read_users(id, username, email, skip, limit, db)
-    
-    if not users:
-        raise HTTPException(status_code=404, detail="Users not found")
-    
-    return users
+    return read_users(id, username, email, skip, limit, db)
 
 @router.post("/", response_model=UserRead, status_code=201)
 def add_user(user: UserCreate, db: Session = Depends(get_db_session)):
-    try:
-        return create_user(user, db)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error creating user: {e}")
-    
-
+    return create_user(user, db)
+        
 @router.put("/{user_id}", response_model=UserRead)
 def update_user_endpoint(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db_session)):
-    try:
-        updated_user = update_user(user_id, user_update, db)
-
-        if not updated_user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        return updated_user
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error updating user: {e}")
+    return update_user(user_id, user_update, db)
     
 @router.delete("/{user_id}")
 def delete_user_endpoint(user_id: int, db: Session = Depends(get_db_session)):
-    try:
-        deleted_user = delete_user(user_id, db)
-
-        if not deleted_user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        return {"detail": "User deleted successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error deleting user: {e}")
+    return delete_user(user_id, db)

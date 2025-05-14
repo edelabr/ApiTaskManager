@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes import user
+from routes import user, todo_list
 
 app = FastAPI(title="Task Manager API")
 
@@ -9,6 +9,7 @@ def read_root():
 
 # Routers
 app.include_router(user.router)
+app.include_router(todo_list.router)
 
 if __name__ == "__main__":
     import uvicorn
