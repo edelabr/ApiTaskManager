@@ -29,6 +29,6 @@ def add_todo_list_endpoint(todo_list: TodoListCreate, db: Session = Depends(get_
 def update_todo_list_endpoint(todo_list_id: int, todo_list_update: TodoListUpdate, db: Session = Depends(get_db_session)):
     return update_todo_list(todo_list_id, todo_list_update, db)
 
-@router.delete("/{todo_list_id}")
+@router.delete("/{todo_list_id}", status_code=204)
 def delete_todo_list_endpoint(todo_list_id: int, db: Session = Depends(get_db_session)):
     return delete_todo_list(todo_list_id, db)
