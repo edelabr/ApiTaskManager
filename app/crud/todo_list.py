@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
 from db.database import get_db_session
-from models.todo_list import TodoList, TodoListCreate, TodoListRead
+from models.todo_list import TodoList, TodoListCreate, TodoListRead, TodoListUpdate
 from models.user import User
 
 def read_todo_list(
@@ -78,3 +78,54 @@ def create_todo_list(todo_list_create: TodoListCreate, db: Session = Depends(get
         raise HTTPException(status_code=400, detail=f"Error creating todo list: {e}")
 
     return returned_new_list 
+
+def update_todo_list(
+    todo_list_id: int,
+    todo_list_update: TodoListUpdate,
+    db: Session = Depends(get_db_session)
+):
+    query = select(TodoList).where(TodoList.id == todo_list_id)
+    todo_list = db.exec(query).first()
+
+    if not todo_list:
+        raise HTTPException(status_code=404, detail="Todo list not found")
+
+    for key, value in todo_list_update.dict(exclude_unset=True).items():
+        setattr(todo_list, key, value)
+
+    owner_query = select(User).where(User.id == todo_list.owner_id)
+    owner = db.exec(owner_query).first()
+
+    try:
+        db.add(todo_list)
+        db.commit()
+        db.refresh(todo_list)
+
+        returned_new_list = TodoListRead(
+        id=todo_list.id,
+        title=todo_list.title,
+        description=todo_list.description,
+        owner_username=owner.username,
+        created_at=todo_list.created_at
+    )
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"Error updating todo list: {e}")
+
+    return returned_new_list
+
+def delete_todo_list(todo_list_id: int, db: Session = Depends(get_db_session)):
+    query = select(TodoList).where(TodoList.id == todo_list_id)
+    todo_list = db.exec(query).first()
+
+    if not todo_list:
+        raise HTTPException(status_code=404, detail="Todo list not found")
+    
+    try:
+        db.delete(todo_list)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"Error deleting todo list: {e}")
+
+    return {"detail": "Todo list deleted successfully"}

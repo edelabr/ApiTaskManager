@@ -9,7 +9,7 @@ from db.database import get_db_session
 router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get("/", response_model=List[UserRead])
-def get_users(
+def get_users_endpoint(
     id: Optional[int] = None,
     username: Optional[str] = None,
     email: Optional[str] = None,
@@ -20,7 +20,7 @@ def get_users(
     return read_users(id, username, email, skip, limit, db)
 
 @router.post("/", response_model=UserRead, status_code=201)
-def add_user(user: UserCreate, db: Session = Depends(get_db_session)):
+def add_user_endpoint(user: UserCreate, db: Session = Depends(get_db_session)):
     return create_user(user, db)
         
 @router.put("/{user_id}", response_model=UserRead)
