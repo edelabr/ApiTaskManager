@@ -11,3 +11,27 @@ class Task(SQLModel, table=True):
     todo_list_id: int   = Field(foreign_key="todolist.id")
     status_id:    int   = Field(foreign_key="taskstatus.id")
     created_at:   datetime = Field(default_factory=datetime.utcnow)
+
+class TaskCreate(SQLModel):
+    title: str
+    description:str
+    due_date: date
+    is_completed: bool
+    todo_list_id: int   = Field(foreign_key="todolist.id")
+    status_id:    int   = Field(foreign_key="taskstatus.id")
+
+class TaskRead(SQLModel):
+    id: int
+    title: str
+    description:str
+    due_date: date
+    is_completed: bool
+    todo_list_id: int 
+    status_id:    int
+    created_at:   datetime
+
+class TaskUpdate(SQLModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    is_completed: Optional[bool] = None
+    status_id:    Optional[int] = None

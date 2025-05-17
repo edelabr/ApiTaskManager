@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 from crud.user import create_user, delete_user, read_users, update_user
@@ -23,10 +23,10 @@ def get_users_endpoint(
 def add_user_endpoint(user: UserCreate, db: Session = Depends(get_db_session)):
     return create_user(user, db)
         
-@router.put("/{user_id}", response_model=UserRead)
-def update_user_endpoint(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db_session)):
-    return update_user(user_id, user_update, db)
+@router.put("/{id}", response_model=UserRead)
+def update_user_endpoint(id: int, user_update: UserUpdate, db: Session = Depends(get_db_session)):
+    return update_user(id, user_update, db)
     
-@router.delete("/{user_id}", status_code=204)
-def delete_user_endpoint(user_id: int, db: Session = Depends(get_db_session)):
-    return delete_user(user_id, db)
+@router.delete("/{id}", status_code=204)
+def delete_user_endpoint(id: int, db: Session = Depends(get_db_session)):
+    return delete_user(id, db)

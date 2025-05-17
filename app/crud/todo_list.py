@@ -80,11 +80,11 @@ def create_todo_list(todo_list_create: TodoListCreate, db: Session = Depends(get
     return returned_new_list 
 
 def update_todo_list(
-    todo_list_id: int,
+    id: int,
     todo_list_update: TodoListUpdate,
     db: Session = Depends(get_db_session)
 ):
-    query = select(TodoList).where(TodoList.id == todo_list_id)
+    query = select(TodoList).where(TodoList.id == id)
     todo_list = db.exec(query).first()
 
     if not todo_list:
@@ -114,8 +114,8 @@ def update_todo_list(
 
     return returned_new_list
 
-def delete_todo_list(todo_list_id: int, db: Session = Depends(get_db_session)):
-    query = select(TodoList).where(TodoList.id == todo_list_id)
+def delete_todo_list(id: int, db: Session = Depends(get_db_session)):
+    query = select(TodoList).where(TodoList.id == id)
     todo_list = db.exec(query).first()
 
     if not todo_list:

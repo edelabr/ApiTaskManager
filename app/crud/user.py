@@ -54,11 +54,11 @@ def create_user(user: UserCreate, db: Session = Depends(get_db_session)):
     return new_user
 
 def update_user(
-    user_id: int,
+    id: int,
     user_update: UserUpdate,
     db: Session = Depends(get_db_session)
 ):
-    query = select(User).where(User.id == user_id)
+    query = select(User).where(User.id == id)
     user = db.exec(query).first()
 
     if not user:
@@ -77,8 +77,8 @@ def update_user(
 
     return user
 
-def delete_user(user_id: int, db: Session = Depends(get_db_session)):
-    query = select(User).where(User.id == user_id)
+def delete_user(id: int, db: Session = Depends(get_db_session)):
+    query = select(User).where(User.id == id)
     user = db.exec(query).first()
 
     if not user:

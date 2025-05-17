@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 from sqlmodel import SQLModel, Field
 
 class User(SQLModel, table=True):

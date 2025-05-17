@@ -25,10 +25,10 @@ def get_todo_list_endpoint(
 def add_todo_list_endpoint(todo_list: TodoListCreate, db: Session = Depends(get_db_session)):
     return create_todo_list(todo_list, db)
 
-@router.put("/{todo_list_id}", response_model=TodoListRead)
-def update_todo_list_endpoint(todo_list_id: int, todo_list_update: TodoListUpdate, db: Session = Depends(get_db_session)):
-    return update_todo_list(todo_list_id, todo_list_update, db)
+@router.put("/{id}", response_model=TodoListRead)
+def update_todo_list_endpoint(id: int, todo_list_update: TodoListUpdate, db: Session = Depends(get_db_session)):
+    return update_todo_list(id, todo_list_update, db)
 
-@router.delete("/{todo_list_id}", status_code=204)
-def delete_todo_list_endpoint(todo_list_id: int, db: Session = Depends(get_db_session)):
-    return delete_todo_list(todo_list_id, db)
+@router.delete("/{id}", status_code=204)
+def delete_todo_list_endpoint(id: int, db: Session = Depends(get_db_session)):
+    return delete_todo_list(id, db)
