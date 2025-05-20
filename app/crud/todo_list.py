@@ -44,7 +44,7 @@ def read_todo_list(
             )
             new_todo_lists.append(todo_list_read)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error getting todo lists: {e}")
+        raise Exception(e)
 
     return new_todo_lists
 
@@ -75,7 +75,7 @@ def create_todo_list(todo_list_create: TodoListCreate, db: Session = Depends(get
     )
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error creating todo list: {e}")
+        raise Exception(e)
 
     return returned_new_list 
 
@@ -110,7 +110,7 @@ def update_todo_list(
     )
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error updating todo list: {e}")
+        raise Exception(e)
 
     return returned_new_list
 
@@ -126,6 +126,6 @@ def delete_todo_list(id: int, db: Session = Depends(get_db_session)):
         db.commit()
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error deleting todo list: {e}")
+        raise Exception(e)
 
     return {"detail": "Todo list deleted successfully"}

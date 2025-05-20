@@ -13,7 +13,7 @@ def read_task_status(
     try:
         task_status = db.execute(query).scalars().all()
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error getting task status: {e}")
+        raise Exception(e)
 
     if not task_status:
         raise HTTPException(status_code=404, detail="Task status not found")
@@ -31,7 +31,7 @@ def create_task_status(task_status: TaskStatusCreate, db: Session = Depends(get_
         db.refresh(new_task_status)
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error creating task status: {e}")
+        raise Exception(e)
     
     return new_task_status
 
@@ -55,7 +55,7 @@ def update_task_status(
         db.refresh(task_status)
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error updating task status: {e}")
+        raise Exception(e)
 
     return task_status
 
@@ -71,6 +71,6 @@ def delete_task_status(id: int, db: Session = Depends(get_db_session)):
         db.commit()
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error deleting task status: {e}")
+        raise Exception(e)
 
     return {"detail": "Task deleted successfully"}
