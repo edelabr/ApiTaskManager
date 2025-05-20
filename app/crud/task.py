@@ -28,7 +28,7 @@ def read_tasks(
     try:
         tasks = db.execute(query).scalars().all()
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error getting tasks: {e}")
+        raise Exception(e)
 
     if not tasks:
         raise HTTPException(status_code=404, detail="Tasks not found")
@@ -51,7 +51,7 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db_session)):
         db.refresh(new_task)
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error creating user: {e}")
+        raise Exception(e)
     
     return new_task
 
@@ -75,7 +75,7 @@ def update_task(
         db.refresh(task)
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error updating task: {e}")
+        raise Exception(e)
 
     return task
 
@@ -91,6 +91,6 @@ def delete_task(id: int, db: Session = Depends(get_db_session)):
         db.commit()
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error deleting task: {e}")
+        raise Exception(e)
 
     return {"detail": "Task deleted successfully"}

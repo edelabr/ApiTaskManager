@@ -28,7 +28,7 @@ def read_users(
     try:
         users = db.execute(query).scalars().all()
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error getting users: {e}")
+        raise Exception(e)
 
     if not users:
         raise HTTPException(status_code=404, detail="Users not found")
@@ -49,7 +49,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db_session)):
         db.refresh(new_user)
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error creating user: {e}")
+        raise Exception(e)
     
     return new_user
 
@@ -73,7 +73,7 @@ def update_user(
         db.refresh(user)
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error updating user: {e}")
+        raise Exception(e)
 
     return user
 
@@ -89,6 +89,6 @@ def delete_user(id: int, db: Session = Depends(get_db_session)):
         db.commit()
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Error deleting user: {e}")
+        raise Exception(e)
 
     return {"detail": "User deleted successfully"}
