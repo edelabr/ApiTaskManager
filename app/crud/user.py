@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
 
+from auth.hashing import hash_password
 from models.user import User, UserCreate, UserUpdate
 from db.database import get_db_session
 
@@ -36,7 +37,7 @@ def read_users(
     return users
 
 def create_user(user: UserCreate, db: Session = Depends(get_db_session)):
-    hashed_password = user.password  # Aquí deberías aplicar un hash a la contraseña
+    hashed_password = hash_password(user.password)
     new_user = User(
         username=user.username,
         email=user.email,
