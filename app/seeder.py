@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from sqlmodel import Session
+from auth.hashing import hash_password
 from models.task import Task
 from models.task_status import TaskStatus
 from models.todo_list import TodoList
@@ -35,11 +36,11 @@ def insert_fake_data():
         try:
             # Crear datos falsos para User
             users = [
-                User(username="user1", email="user1@example.com", hashed_password="password1", created_at=datetime.utcnow()),
-                User(username="user2", email="user2@example.com", hashed_password="password2", created_at=datetime.utcnow()),
-                User(username="user3", email="user3@example.com", hashed_password="password3", created_at=datetime.utcnow()),
-                User(username="user4", email="user4@example.com", hashed_password="password4", created_at=datetime.utcnow()),
-                User(username="user5", email="user5@example.com", hashed_password="password5", created_at=datetime.utcnow())
+                User(username="user1", email="user1@example.com", hashed_password=hash_password("password1"), created_at=datetime.utcnow()),
+                User(username="user2", email="user2@example.com", hashed_password=hash_password("password2"), created_at=datetime.utcnow()),
+                User(username="user3", email="user3@example.com", hashed_password=hash_password("password3"), created_at=datetime.utcnow()),
+                User(username="user4", email="user4@example.com", hashed_password=hash_password("password4"), created_at=datetime.utcnow()),
+                User(username="user5", email="user5@example.com", hashed_password=hash_password("password5"), created_at=datetime.utcnow())
             ]
             session.add_all(users)
             session.commit()
