@@ -11,6 +11,7 @@ __pycache__/
 
 # Archivos de logs
 *.log
+revoked_tokens.txt
 
 # Archivos del sistema operativo
 .DS_Store

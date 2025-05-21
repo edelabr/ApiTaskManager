@@ -36,9 +36,9 @@ def insert_fake_data():
         try:
             # Crear datos falsos para User
             users = [
-                User(username="user1", email="user1@example.com", hashed_password=hash_password("password1"), created_at=datetime.utcnow()),
-                User(username="user2", email="user2@example.com", hashed_password=hash_password("password2"), created_at=datetime.utcnow()),
-                User(username="user3", email="user3@example.com", hashed_password=hash_password("password3"), created_at=datetime.utcnow()),
+                User(username="user_admin", email="user_admin@example.com", hashed_password=hash_password("user_admin"), role="admin", created_at=datetime.utcnow()),
+                User(username="user_user", email="user_user@example.com", hashed_password=hash_password("user_user"), created_at=datetime.utcnow()),
+                User(username="user_viewer", email="user_viewer@example.com", hashed_password=hash_password("user_viewer"), created_at=datetime.utcnow()),
                 User(username="user4", email="user4@example.com", hashed_password=hash_password("password4"), created_at=datetime.utcnow()),
                 User(username="user5", email="user5@example.com", hashed_password=hash_password("password5"), created_at=datetime.utcnow())
             ]
