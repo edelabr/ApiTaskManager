@@ -5,7 +5,7 @@ import logging.config
 from starlette.concurrency import iterate_in_threadpool
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from routes import task_status, user, todo_list, task
+from routes import task_status, user, todo_list, task, auth
 
 # Configurar logging
 config_path = os.path.join(os.path.dirname(__file__), 'logging.conf')
@@ -54,6 +54,7 @@ def read_root():
     return {"message": "Welcome to Task Manager API!"}
 
 # Routers
+app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(todo_list.router)
 app.include_router(task.router)
