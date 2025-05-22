@@ -1,6 +1,9 @@
 import os
 from datetime import datetime, timedelta, timezone
+from dotenv import load_dotenv
 from jose import jwt, JWTError
+
+load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 REFRESH_SECRET_KEY = os.getenv("REFRESH_SECRET_KEY")

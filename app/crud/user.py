@@ -13,16 +13,20 @@ def read_users(
     email: Optional[str] = None,
     skip: int = 0,
     limit: int = 10,
-    db: Session = Depends(get_db_session)
+    db: Session = Depends(get_db_session),
+    current_user: dict = Depends()
 ):
     query = select(User)
 
+    if current_user["role"] in ["user"]:
+        query = query.where(User.username == current_user["sub"])
     if id:
         query = query.where(User.id == id)
     if username:
         query = query.where(User.username == username)
     if email:
         query = query.where(User.email == email)
+    
 
     query = query.offset(skip).limit(limit)
     
@@ -36,7 +40,11 @@ def read_users(
 
     return users
 
-def create_user(user: UserCreate, db: Session = Depends(get_db_session)):
+def create_user(
+    user: UserCreate, 
+    db: Session = Depends(get_db_session), 
+    current_user: dict = Depends()
+):
     hashed_password = hash_password(user.password)
     new_user = User(
         username=user.username,
@@ -57,14 +65,18 @@ def create_user(user: UserCreate, db: Session = Depends(get_db_session)):
 def update_user(
     id: int,
     user_update: UserUpdate,
-    db: Session = Depends(get_db_session)
+    db: Session = Depends(get_db_session),
+    current_user: dict = Depends()
 ):
     query = select(User).where(User.id == id)
-    user = db.exec(query).first()
+    user = db.exec(query).first()    
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-
+    
+    if current_user["role"] in ["user"] and current_user["sub"] != user.username:
+        raise HTTPException(status_code=403, detail="Insufficient permissions to update other users")
+    
     for key, value in user_update.dict(exclude_unset=True).items():
         setattr(user, key, value)
 
@@ -78,12 +90,19 @@ def update_user(
 
     return user
 
-def delete_user(id: int, db: Session = Depends(get_db_session)):
+def delete_user(
+    id: int, 
+    db: Session = Depends(get_db_session), 
+    current_user: dict = Depends()
+):
     query = select(User).where(User.id == id)
     user = db.exec(query).first()
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    
+    if current_user["role"] in ["user"] and current_user["sub"] != user.username:
+        raise HTTPException(status_code=403, detail="Insufficient permissions to delete other users")
     
     try:
         db.delete(user)
