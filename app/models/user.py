@@ -31,7 +31,3 @@ class UserUpdate(SQLModel):
     username: Optional[str] = None
     email: Optional[str] = None
     role: Optional[RoleEnum] = None
-
-class LoginData(SQLModel):
-    username: str
-    hashed_password: str
