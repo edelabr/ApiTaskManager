@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session
-from auth.jwt import create_access_token, create_refresh_token, verify_access_token, verify_refresh_token, revoke_token
+from auth.jwt import create_access_token, create_refresh_token, revoke_token_redis, verify_access_token, verify_refresh_token, revoke_token
 from auth.hashing import hash_password, verify_password
 from db.database import get_db_session
 from auth.dependencies import get_current_user, oauth2_scheme
@@ -82,6 +82,7 @@ def logout(current_user: dict = Depends(get_current_user), token: str = Depends(
         session.add(user)
         session.commit()
         revoke_token(token)
+        revoke_token_redis(token)
         logger.info(f"User {user.username} logged out successfully")
         return {"message": "Successfully logged out"}
     except Exception as e:
