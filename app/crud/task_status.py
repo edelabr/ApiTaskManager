@@ -1,10 +1,8 @@
-from datetime import datetime
-from typing import Optional
 from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
 
-from models.task_status import TaskStatus, TaskStatusCreate, TaskStatusUpdate
-from db.database import get_db_session
+from app.models.task_status import TaskStatus, TaskStatusCreate, TaskStatusUpdate
+from app.db.database import get_db_session
 
 def read_task_status(
     db: Session = Depends(get_db_session),

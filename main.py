@@ -5,7 +5,7 @@ import logging.config
 from starlette.concurrency import iterate_in_threadpool
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from routes import task_status, user, todo_list, task, auth
+from app.routes import task_status, user, todo_list, task, auth
 
 # Configurar logging
 config_path = os.path.join(os.path.dirname(__file__), 'logging.conf')

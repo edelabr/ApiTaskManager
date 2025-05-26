@@ -1,14 +1,13 @@
 
 from datetime import datetime
 from typing import Optional
-
 from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
 
-from models.todo_list import TodoList
-from models.user import User
-from db.database import get_db_session
-from models.task import Task, TaskCreate, TaskUpdate
+from app.models.todo_list import TodoList
+from app.models.user import User
+from app.db.database import get_db_session
+from app.models.task import Task, TaskCreate, TaskUpdate
 
 
 def read_tasks(

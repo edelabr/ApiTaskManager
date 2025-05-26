@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session
-from auth.jwt import create_access_token, create_refresh_token, revoke_token_redis, verify_access_token, verify_refresh_token, revoke_token
-from auth.hashing import hash_password, verify_password
-from db.database import get_db_session
-from auth.dependencies import get_current_user, oauth2_scheme
-from models.user import User, UserCreate, UserRead
+
+from app.auth.jwt import create_access_token, create_refresh_token, revoke_token_redis, verify_access_token, verify_refresh_token, revoke_token
+from app.auth.hashing import hash_password, verify_password
+from app.db.database import get_db_session
+from app.auth.dependencies import get_current_user, oauth2_scheme
+from app.models.user import User, UserCreate, UserRead
 from logging import getLogger
 
 logger = getLogger(__name__)

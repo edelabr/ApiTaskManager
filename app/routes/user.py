@@ -2,10 +2,10 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-from auth.dependencies import require_role
-from crud.user import create_user, delete_user, read_users, update_user
-from models.user import UserCreate, UserRead, UserUpdate
-from db.database import get_db_session
+from app.auth.dependencies import require_role
+from app.crud.user import create_user, delete_user, read_users, update_user
+from app.models.user import UserCreate, UserRead, UserUpdate
+from app.db.database import get_db_session
 
 router = APIRouter(prefix="/users", tags=["users"])
 

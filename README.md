@@ -61,6 +61,9 @@ El proyecto utiliza un único archivo `.env` para configuraciones tanto locales 
 Ejemplo de `.env`:
 
 ```properties
+# Detectar si estamos dentro de Docker
+IN_DOCKER=false
+
 # ========================
 # DATABASE CONFIGURATION
 # ========================
@@ -85,7 +88,7 @@ REFRESH_SECRET_KEY=your_refresh_secret_key_here
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=15
 REFRESH_TOKEN_EXPIRE_DAYS=7
-REVOKED_TOKENS_FILE=/app/revoked_tokens.json
+REVOKED_TOKENS_FILE=/revoked_tokens.json
 ```
 
 ### Cómo Ejecutar el Proyecto
@@ -106,7 +109,9 @@ REVOKED_TOKENS_FILE=/app/revoked_tokens.json
    ```
 
 3. **Configurar la base de datos**:
-   Asegúrate de que PostgreSQL esté instalado y ejecutándose. Crea la base de datos especificada en el archivo `.env`.
+
+   - Asegúrate de que PostgreSQL esté instalado y ejecutándose. Crea la base de datos especificada en el archivo `.env` y asegurate que la variable IN_DOCKER está a false.
+   - **Nota:** si lo necesitas puedes correr el servicio de db incluido en el fichero docker-compose.yml
 
 4. **Ejecutar el seeder**:
    Si deseas poblar la base de datos con datos iniciales, ejecuta:
@@ -131,6 +136,7 @@ REVOKED_TOKENS_FILE=/app/revoked_tokens.json
 
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
+- Variable IN_DOCKER del archivo `.env` en true
 
 ### Pasos para Ejecutar
 
