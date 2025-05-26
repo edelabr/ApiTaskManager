@@ -178,7 +178,7 @@ Si deseas poblar la base de datos con datos iniciales, puedes ejecutar el script
 
 2. Ejecuta el seeder dentro del contenedor de la aplicación:
    ```bash
-   docker-compose exec app python seeder.py
+   docker-compose run --rm api python seeder.py
    ```
 
 Esto poblará la base de datos con los datos iniciales definidos en el script `seeder.py`.
