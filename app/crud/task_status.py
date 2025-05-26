@@ -7,7 +7,8 @@ from models.task_status import TaskStatus, TaskStatusCreate, TaskStatusUpdate
 from db.database import get_db_session
 
 def read_task_status(
-    db: Session = Depends(get_db_session)
+    db: Session = Depends(get_db_session),
+    current_user: dict = Depends()
 ):
     query = select(TaskStatus)
     try:
@@ -20,7 +21,11 @@ def read_task_status(
 
     return task_status
 
-def create_task_status(task_status: TaskStatusCreate, db: Session = Depends(get_db_session)):
+def create_task_status(
+    task_status: TaskStatusCreate, 
+    db: Session = Depends(get_db_session), 
+    current_user: dict = Depends()
+):
     new_task_status = TaskStatus(
         name=task_status.name,
         color=task_status.color
@@ -38,7 +43,8 @@ def create_task_status(task_status: TaskStatusCreate, db: Session = Depends(get_
 def update_task_status(
     id: int,
     task_status_update: TaskStatusUpdate,
-    db: Session = Depends(get_db_session)
+    db: Session = Depends(get_db_session),
+    current_user: dict = Depends()
 ):
     query = select(TaskStatus).where(TaskStatus.id == id)
     task_status = db.exec(query).first()
@@ -59,7 +65,11 @@ def update_task_status(
 
     return task_status
 
-def delete_task_status(id: int, db: Session = Depends(get_db_session)):
+def delete_task_status(
+    id: int, 
+    db: Session = Depends(get_db_session), 
+    current_user: dict = Depends()
+):
     query = select(TaskStatus).where(TaskStatus.id == id)
     task_status = db.exec(query).first()
 

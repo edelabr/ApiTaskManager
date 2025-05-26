@@ -1,6 +1,10 @@
 import os
 from datetime import datetime, timedelta, timezone
+from dotenv import load_dotenv
 from jose import jwt, JWTError
+from db.redis_client import redis_client
+
+load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 REFRESH_SECRET_KEY = os.getenv("REFRESH_SECRET_KEY")
@@ -57,3 +61,16 @@ def revoke_token(token: str):
     revoked_tokens.add(token)
     with open(REVOKED_TOKENS_FILE, "a") as file:
         file.write(f"{token}\n")
+
+def revoke_token_redis(token: str):
+    expiration = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    redis_client.set(token, "revoked", ex=expiration)
+
+def is_token_revoked_redis(token: str) -> bool:
+    try:
+        if redis_client.exists(token) == 1:  # Verificar si el token está revocado en redis
+            raise JWTError("Token has been revoked")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None

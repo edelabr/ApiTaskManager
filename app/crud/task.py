@@ -5,6 +5,8 @@ from typing import Optional
 from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
 
+from models.todo_list import TodoList
+from models.user import User
 from db.database import get_db_session
 from models.task import Task, TaskCreate, TaskUpdate
 
@@ -14,10 +16,13 @@ def read_tasks(
     is_completed: Optional[bool] = None,
     skip: int = 0,
     limit: int = 10,
-    db: Session = Depends(get_db_session)
+    db: Session = Depends(get_db_session),
+    current_user: dict = Depends()
 ):
     query = select(Task)
-
+    
+    if current_user["role"] in ["user"]:
+        query = query.join(TodoList, Task.todo_list_id == TodoList.id).join(User, TodoList.owner_id == User.id).where(User.username == current_user["sub"])
     if id:
         query = query.where(Task.todo_list_id == id)
     if is_completed is not None:
@@ -35,7 +40,18 @@ def read_tasks(
 
     return tasks
 
-def create_task(task: TaskCreate, db: Session = Depends(get_db_session)):
+def create_task(
+    task: TaskCreate, 
+    db: Session = Depends(get_db_session), 
+    current_user: dict = Depends()
+):
+    # Recuperar el owner_username del todo list asociado a la tarea
+    owner_query = select(User).join(User, TodoList.owner_id == User.id).where(TodoList.id == task.todo_list_id)
+    owner = db.exec(owner_query).first()
+
+    if current_user["role"] in ["user"] and current_user["sub"] != owner.username:
+        raise HTTPException(status_code=403, detail="Insufficient permissions to create task related to todo list to other users")
+
     try:
         new_task = Task(
         title = task.title,
@@ -58,7 +74,8 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db_session)):
 def update_task(
     id: int,
     task_update: TaskUpdate,
-    db: Session = Depends(get_db_session)
+    db: Session = Depends(get_db_session),
+    current_user: dict = Depends()
 ):
     query = select(Task).where(Task.id == id)
     task = db.exec(query).first()
@@ -68,6 +85,13 @@ def update_task(
 
     for key, value in task_update.dict(exclude_unset=True).items():
         setattr(task, key, value)
+
+    # Recuperar el owner_username del todo list asociado a la tarea
+    owner_query = select(User).join(User, TodoList.owner_id == User.id).where(TodoList.id == id)
+    owner = db.exec(owner_query).first()
+
+    if current_user["role"] in ["user"] and current_user["sub"] != owner.username:
+        raise HTTPException(status_code=403, detail="Insufficient permissions to uptade task related to todo list to other users")
 
     try:
         db.add(task)
@@ -79,12 +103,23 @@ def update_task(
 
     return task
 
-def delete_task(id: int, db: Session = Depends(get_db_session)):
+def delete_task(
+    id: int, 
+    db: Session = Depends(get_db_session), 
+    current_user: dict = Depends()
+):
     query = select(Task).where(Task.id == id)
     task = db.exec(query).first()
 
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
+    
+    # Recuperar el owner_username del todo list asociado a la tarea
+    owner_query = select(User).join(User, TodoList.owner_id == User.id).where(TodoList.id == id)
+    owner = db.exec(owner_query).first()
+
+    if current_user["role"] in ["user"] and current_user["sub"] != owner.username:
+        raise HTTPException(status_code=403, detail="Insufficient permissions to delete task related to todo list to other users")
     
     try:
         db.delete(task)
