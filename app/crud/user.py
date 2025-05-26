@@ -52,6 +52,14 @@ def create_user(
         hashed_password=hashed_password,
         created_at=datetime.utcnow()
     )
+    existing_user_username = db.exec(select(User).where(User.username == new_user.username)).first()
+    if existing_user_username:
+        raise HTTPException(status_code=409, detail=f"An user with username '{new_user.username}' already exists.")
+    
+    existing_user_email = db.exec(select(User).where(User.email == new_user.email)).first()
+    if existing_user_email:
+        raise HTTPException(status_code=409, detail=f"An user with email '{new_user.email}' already exists.")
+    
     try:
         db.add(new_user)
         db.commit()
@@ -73,6 +81,14 @@ def update_user(
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    
+    existing_user_username = db.exec(select(User).where((User.username == user_update.username) & (User.id != id))).first()
+    if existing_user_username:
+        raise HTTPException(status_code=409, detail=f"An user with username '{user_update.username}' already exists.")
+    
+    existing_user_email = db.exec(select(User).where((User.email == user_update.email) & (User.id != id))).first()
+    if existing_user_email:
+        raise HTTPException(status_code=409, detail=f"An user with email '{user_update.email}' already exists.")
     
     if current_user["role"] in ["user"] and current_user["sub"] != user.username:
         raise HTTPException(status_code=403, detail="Insufficient permissions to update other users")
