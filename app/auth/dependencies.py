@@ -1,6 +1,7 @@
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from auth.jwt import is_token_revoked_redis, verify_access_token
+
+from app.auth.jwt import is_token_revoked_redis, verify_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 

@@ -2,10 +2,10 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-from auth.dependencies import require_role
-from crud.task_status import create_task_status, delete_task_status, read_task_status, update_task_status
-from models.task_status import TaskStatusCreate, TaskStatusRead, TaskStatusUpdate
-from db.database import get_db_session
+from app.auth.dependencies import require_role
+from app.crud.task_status import create_task_status, delete_task_status, read_task_status, update_task_status
+from app.models.task_status import TaskStatusCreate, TaskStatusRead, TaskStatusUpdate
+from app.db.database import get_db_session
 
 router = APIRouter(prefix="/task_status", tags=["task_status"])
 

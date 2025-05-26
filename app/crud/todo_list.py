@@ -1,9 +1,10 @@
 from typing import Optional
 from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
-from db.database import get_db_session
-from models.todo_list import TodoList, TodoListCreate, TodoListRead, TodoListUpdate
-from models.user import User
+
+from app.db.database import get_db_session
+from app.models.todo_list import TodoList, TodoListCreate, TodoListRead, TodoListUpdate
+from app.models.user import User
 
 def read_todo_list(
     id: Optional[int] = None,
@@ -32,9 +33,6 @@ def read_todo_list(
     
     try:
         todo_lists = db.execute(query).fetchall()
-
-        if not todo_lists:
-            raise HTTPException(status_code=404, detail="Todo lists not found")
     
         new_todo_lists = []
         for todo_list in todo_lists:
@@ -48,6 +46,9 @@ def read_todo_list(
             new_todo_lists.append(todo_list_read)
     except Exception as e:
         raise Exception(e)
+    
+    if not todo_lists:
+        raise HTTPException(status_code=404, detail="Todo lists not found")
 
     return new_todo_lists
 

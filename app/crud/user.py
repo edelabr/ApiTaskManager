@@ -3,9 +3,9 @@ from typing import Optional
 from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
 
-from auth.hashing import hash_password
-from models.user import User, UserCreate, UserUpdate
-from db.database import get_db_session
+from app.auth.hashing import hash_password
+from app.models.user import User, UserCreate, UserUpdate
+from app.db.database import get_db_session
 
 def read_users(
     id: Optional[int] = None,

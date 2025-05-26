@@ -2,10 +2,10 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-from auth.dependencies import require_role
-from crud.todo_list import create_todo_list, read_todo_list, update_todo_list, delete_todo_list
-from db.database import get_db_session
-from models.todo_list import TodoListCreate, TodoListRead, TodoListUpdate
+from app.auth.dependencies import require_role
+from app.crud.todo_list import create_todo_list, read_todo_list, update_todo_list, delete_todo_list
+from app.db.database import get_db_session
+from app.models.todo_list import TodoListCreate, TodoListRead, TodoListUpdate
 
 
 router = APIRouter(prefix="/todo_lists", tags=["todo_lists"])

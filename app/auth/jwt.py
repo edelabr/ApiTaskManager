@@ -2,7 +2,8 @@ import os
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 from jose import jwt, JWTError
-from db.redis_client import redis_client
+
+from app.db.redis_client import redis_client
 
 load_dotenv()
 
