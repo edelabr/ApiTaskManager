@@ -45,7 +45,7 @@ def create_task(
     current_user: dict = Depends()
 ):
     # Recuperar el owner_username del todo list asociado a la tarea
-    owner_query = select(User).join(User, TodoList.owner_id == User.id).where(TodoList.id == task.todo_list_id)
+    owner_query = select(User).join(TodoList, TodoList.owner_id == User.id).where(TodoList.id == task.todo_list_id)
     owner = db.exec(owner_query).first()
 
     if current_user["role"] in ["user"] and current_user["sub"] != owner.username:
@@ -86,7 +86,7 @@ def update_task(
         setattr(task, key, value)
 
     # Recuperar el owner_username del todo list asociado a la tarea
-    owner_query = select(User).join(User, TodoList.owner_id == User.id).where(TodoList.id == id)
+    owner_query = select(User).join(TodoList, TodoList.owner_id == User.id).where(TodoList.id == id)
     owner = db.exec(owner_query).first()
 
     if current_user["role"] in ["user"] and current_user["sub"] != owner.username:
@@ -114,7 +114,7 @@ def delete_task(
         raise HTTPException(status_code=404, detail="Task not found")
     
     # Recuperar el owner_username del todo list asociado a la tarea
-    owner_query = select(User).join(User, TodoList.owner_id == User.id).where(TodoList.id == id)
+    owner_query = select(User).join(TodoList, TodoList.owner_id == User.id).where(TodoList.id == id)
     owner = db.exec(owner_query).first()
 
     if current_user["role"] in ["user"] and current_user["sub"] != owner.username:

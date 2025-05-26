@@ -29,5 +29,5 @@ class UserRead(UserBase):
 
 class UserUpdate(SQLModel):
     username: Optional[str] = None
-    email: Optional[str] = None
+    email: Optional[EmailStr] = None
     role: Optional[RoleEnum] = None

@@ -82,6 +82,9 @@ def update_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
+    if current_user["role"] in ["user", "viewer"] and current_user["sub"] != user.username:
+        raise HTTPException(status_code=403, detail="Insufficient permissions to update other users")
+    
     existing_user_username = db.exec(select(User).where((User.username == user_update.username) & (User.id != id))).first()
     if existing_user_username:
         raise HTTPException(status_code=409, detail=f"An user with username '{user_update.username}' already exists.")
@@ -89,9 +92,6 @@ def update_user(
     existing_user_email = db.exec(select(User).where((User.email == user_update.email) & (User.id != id))).first()
     if existing_user_email:
         raise HTTPException(status_code=409, detail=f"An user with email '{user_update.email}' already exists.")
-    
-    if current_user["role"] in ["user"] and current_user["sub"] != user.username:
-        raise HTTPException(status_code=403, detail="Insufficient permissions to update other users")
     
     for key, value in user_update.dict(exclude_unset=True).items():
         setattr(user, key, value)
@@ -117,7 +117,7 @@ def delete_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    if current_user["role"] in ["user"] and current_user["sub"] != user.username:
+    if current_user["role"] in ["user", "viewer"] and current_user["sub"] != user.username:
         raise HTTPException(status_code=403, detail="Insufficient permissions to delete other users")
     
     try:

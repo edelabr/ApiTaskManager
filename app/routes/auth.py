@@ -4,6 +4,7 @@ from sqlmodel import Session
 
 from app.auth.jwt import create_access_token, create_refresh_token, revoke_token_redis, verify_access_token, verify_refresh_token, revoke_token
 from app.auth.hashing import hash_password, verify_password
+from app.crud.user import create_user
 from app.db.database import get_db_session
 from app.auth.dependencies import get_current_user, oauth2_scheme
 from app.models.user import User, UserCreate, UserRead
@@ -15,27 +16,7 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 @router.post("/register", response_model=UserRead)
 def register(user: UserCreate, session: Session = Depends(get_db_session)):
-    try:
-        existing_username = session.query(User).filter(User.username == user.username).first()
-        if existing_username:
-            raise HTTPException(status_code=400, detail="Username already exists")
-        
-        existing_email = session.query(User).filter(User.email == user.email).first()
-        if existing_email:
-            raise HTTPException(status_code=400, detail="Email already exists")
-        hashed_password = hash_password(user.password)
-        new_user = User(
-            username=user.username,
-            email=user.email,
-            hashed_password=hashed_password,
-            role=user.role  # Default role is "user"
-        )
-        session.add(new_user)
-        session.commit()
-        session.refresh(new_user)
-        return new_user
-    except Exception as e:
-         raise Exception(e)
+    return create_user(user, session)
 
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_db_session)):
