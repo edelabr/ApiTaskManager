@@ -31,6 +31,6 @@ def add_todo_list_endpoint(todo_list: TodoListCreate, db: Session = Depends(get_
 def update_todo_list_endpoint(id: int, todo_list_update: TodoListUpdate, db: Session = Depends(get_db_session), current_user: dict = Depends(require_role("admin", "user"))):
     return update_todo_list(id, todo_list_update, db, current_user)
 
-@router.delete("/{id}", status_code=204)
+@router.delete("/{id}")
 def delete_todo_list_endpoint(id: int, db: Session = Depends(get_db_session), current_user: dict = Depends(require_role("admin", "user"))):
     return delete_todo_list(id, db, current_user)

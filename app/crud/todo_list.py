@@ -137,11 +137,11 @@ def delete_todo_list(
     query = select(TodoList).where(TodoList.id == id)
     todo_list = db.exec(query).first()
 
-    owner_query = select(User).where(User.id == todo_list.owner_id)
-    owner = db.exec(owner_query).first()
-
     if not todo_list:
         raise HTTPException(status_code=404, detail="Todo list not found")
+
+    owner_query = select(User).where(User.id == todo_list.owner_id)
+    owner = db.exec(owner_query).first()
     
     if current_user["role"] in ["user"] and current_user["sub"] != owner.username:
         raise HTTPException(status_code=403, detail="Insufficient permissions to update todo list to other users")

@@ -28,6 +28,6 @@ def add_task_endpoint(task: TaskCreate, db: Session = Depends(get_db_session), c
 def update_task_endpoint(id: int, task_update: TaskUpdate, db: Session = Depends(get_db_session), current_user: dict = Depends(require_role("admin", "user"))):
     return update_task(id, task_update, db, current_user)
     
-@router.delete("/{id}", status_code=204)
+@router.delete("/{id}")
 def delete_task_endpoint(id: int, db: Session = Depends(get_db_session), current_user: dict = Depends(require_role("admin", "user"))):
     return delete_task(id, db, current_user)

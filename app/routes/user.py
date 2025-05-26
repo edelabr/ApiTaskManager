@@ -29,6 +29,6 @@ def add_user_endpoint(user: UserCreate, db: Session = Depends(get_db_session), c
 def update_user_endpoint(id: int, user_update: UserUpdate, db: Session = Depends(get_db_session), current_user: dict = Depends(require_role("admin", "user", "viewer"))):
     return update_user(id, user_update, db, current_user)
     
-@router.delete("/{id}", status_code=204)
+@router.delete("/{id}")
 def delete_user_endpoint(id: int, db: Session = Depends(get_db_session), current_user: dict = Depends(require_role("admin", "user", "viewer"))):
     return delete_user(id, db, current_user)
